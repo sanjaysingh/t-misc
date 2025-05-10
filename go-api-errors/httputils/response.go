@@ -10,23 +10,23 @@ import (
 
 // RespondWithError handles writing error responses in a structured JSON format.
 func RespondWithError(w http.ResponseWriter, err error) {
-	var apiErr *apperrors.APIError
+	var appErr *apperrors.AppError
 	var ok bool
 
 	// Check if the error is an APIError
-	if apiErr, ok = err.(*apperrors.APIError); !ok {
+	if appErr, ok = err.(*apperrors.AppError); !ok {
 		// If not, default to an internal server error
 		log.Printf("Unhandled error: %v", err) // Log the original error for debugging
-		apiErr = apperrors.ErrInternalServer
+		appErr = apperrors.ErrInternalServer
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(apiErr.StatusCode)
+	w.WriteHeader(appErr.StatusCode)
 
 	response := apperrors.JSONErrorResponse{
 		Notice: apperrors.ErrorNotice{
-			ID:          apiErr.ID,
-			Description: apiErr.Description,
+			ID:          appErr.ID,
+			Description: appErr.Description,
 		},
 	}
 
